@@ -3,7 +3,7 @@
         'name' => 'bengkel-programmer/efkdm',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'bb3fd58e37176bda6d55c8293cd952fe73c2fa67',
+        'reference' => 'ecb4d1e00a202a5335814e961ef11a78d8ac1d31',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'bengkel-programmer/efkdm' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'bb3fd58e37176bda6d55c8293cd952fe73c2fa67',
+            'reference' => 'ecb4d1e00a202a5335814e961ef11a78d8ac1d31',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
