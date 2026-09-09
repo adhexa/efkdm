@@ -50,10 +50,17 @@ jobs:
         password: ${{ secrets.VPS_PASSWORD }}
         port: 22
         script: |
+          if [ ! -d "/root/efkdm" ]; then
+            echo "--> Folder /root/efkdm not found. Cloning repository..."
+            git clone https://github.com/${{ github.repository }}.git /root/efkdm
+          fi
+
           echo "--> Navigating to directory /root/efkdm..."
           cd /root/efkdm
 
-          echo "--> Pulling latest code from branch ${{ github.ref_name }}..."
+          echo "--> Fetching & pulling latest code from branch ${{ github.ref_name }}..."
+          git fetch origin
+          git checkout ${{ github.ref_name }}
           git pull origin ${{ github.ref_name }}
 
           echo "--> Executing Docker deployment for app efkdm on port 5000..."
