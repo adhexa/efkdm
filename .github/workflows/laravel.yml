@@ -36,6 +36,7 @@ jobs:
 
   deploy:
     name: Deploy to VPS (Docker Ubuntu)
+    environment: vps1
     needs: laravel-tests
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'
