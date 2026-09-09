@@ -50,35 +50,75 @@ jobs:
         password: ${{ secrets.VPS_PASSWORD }}
         port: 22
         script: |
-          if [ ! -d "/root/efkdm" ]; then
-            echo "--> Folder /root/efkdm not found. Cloning repository..."
-            git clone https://github.com/${{ github.repository }}.git /root/efkdm
+          REMOTE_DIR="/root/efkdm"
+          APP_NAME="efkdm"
+          APP_PORT="5000"
+          DOMAIN_NAME="202-10-36-205.sslip.io"
+
+          echo "--> Checking directory $REMOTE_DIR..."
+          if [ ! -d "$REMOTE_DIR" ]; then
+            echo "--> Cloning repository to $REMOTE_DIR..."
+            git clone https://github.com/${{ github.repository }}.git $REMOTE_DIR
           fi
 
-          echo "--> Navigating to directory /root/efkdm..."
-          cd /root/efkdm
-
-          echo "--> Fetching & pulling latest code from branch ${{ github.ref_name }}..."
+          cd $REMOTE_DIR
+          echo "--> Fetching latest code..."
           git fetch origin
           git checkout ${{ github.ref_name }}
           git pull origin ${{ github.ref_name }}
 
-          echo "--> Executing Docker deployment for app efkdm on port 5000..."
-          if [ -f "docker-compose.yml" ] || [ -f "docker-compose.yaml" ]; then
-            docker compose down
-            docker compose up -d --build
-          elif [ -f "Dockerfile" ]; then
-            docker build -t efkdm .
-            docker stop efkdm 2>/dev/null || true
-            docker rm efkdm 2>/dev/null || true
-            docker run -d --name efkdm -p 5000:80 --restart always efkdm
-          else
-            # Standard Laravel deployment fallback if running directly in Docker host
-            composer install --no-dev --optimize-autoloader
-            php artisan migrate --force
-            php artisan config:cache
-            php artisan route:cache
-            php artisan view:cache
-          fi
+          echo "--> Checking Docker installation on VPS..."
+          command -v docker || (apt-get update && apt-get install -y docker.io docker-compose)
 
-          echo "--> Deployment finished successfully!"
+          echo "--> Rebuilding Docker container $APP_NAME..."
+          docker stop $APP_NAME 2>/dev/null || true
+          docker rm $APP_NAME 2>/dev/null || true
+          docker build -t ${APP_NAME}:latest .
+          docker run -d --name $APP_NAME -p ${APP_PORT}:80 -v ${REMOTE_DIR}:/var/www/html --restart always ${APP_NAME}:latest
+
+          echo "--> Setting up environment & Laravel inside container..."
+          [ -f .env ] || cp .env.example .env
+          sed -i 's|/usr/share/nginx/html/database/database.sqlite|/var/www/html/database/database.sqlite|g' .env 2>/dev/null || true
+          mkdir -p database && touch database/database.sqlite
+
+          docker exec $APP_NAME composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader
+          docker exec $APP_NAME php artisan key:generate --force
+          docker exec $APP_NAME php artisan migrate --force
+          docker exec $APP_NAME php artisan db:seed --force 2>/dev/null || true
+          docker exec $APP_NAME rm -rf /var/www/html/public/storage 2>/dev/null || true
+          docker exec $APP_NAME php artisan storage:link --force 2>/dev/null || true
+          docker exec $APP_NAME php artisan config:clear
+          docker exec $APP_NAME php artisan cache:clear
+          docker exec $APP_NAME php artisan view:clear
+          docker exec $APP_NAME chmod -R 777 storage bootstrap/cache database
+
+          echo "--> Configuring Nginx Reverse Proxy & SSL (https://$DOMAIN_NAME)..."
+          apt-get update -qq && apt-get install -y -qq nginx certbot python3-certbot-nginx 2>/dev/null || true
+
+          cat << 'EOF' > /etc/nginx/sites-available/efkdm
+          server {
+              listen 80;
+              server_name 202-10-36-205.sslip.io;
+
+              location / {
+                  proxy_pass http://127.0.0.1:5000;
+                  proxy_set_header Host $host;
+                  proxy_set_header X-Real-IP $remote_addr;
+                  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                  proxy_set_header X-Forwarded-Proto $scheme;
+              }
+          }
+          EOF
+
+          ln -sf /etc/nginx/sites-available/efkdm /etc/nginx/sites-enabled/efkdm
+          rm -f /etc/nginx/sites-enabled/default 2>/dev/null || true
+          nginx -t && systemctl reload nginx
+
+          certbot --nginx -d $DOMAIN_NAME --non-interactive --agree-tos --register-unsafely-without-email 2>/dev/null || true
+
+          sed -i "s|^APP_URL=.*|APP_URL=https://${DOMAIN_NAME}|g" .env
+          docker exec $APP_NAME php artisan config:clear
+          docker exec $APP_NAME php artisan cache:clear
+
+          echo "--> Deployment Completed Successfully!"
+          echo "--> Web App live at: https://$DOMAIN_NAME or http://202.10.36.205:5000"
