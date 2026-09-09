@@ -49,8 +49,8 @@ jobs:
         password: ${{ secrets.VPS_PASSWORD }}
         port: 22
         script: |
-          echo "--> Navigating to directory /root/absensi-rapat-web..."
-          cd /root/absensi-rapat-web
+          echo "--> Navigating to directory /root/efkdm..."
+          cd /root/efkdm
 
           echo "--> Pulling latest code from branch ${{ github.ref_name }}..."
           git pull origin ${{ github.ref_name }}
