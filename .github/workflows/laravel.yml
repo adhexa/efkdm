@@ -53,7 +53,6 @@ jobs:
           REMOTE_DIR="/root/efkdm"
           APP_NAME="efkdm"
           APP_PORT="5000"
-          DOMAIN_NAME="202-10-36-205.sslip.io"
 
           echo "--> Checking directory $REMOTE_DIR..."
           if [ ! -d "$REMOTE_DIR" ]; then
