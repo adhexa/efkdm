@@ -1,4 +1,4 @@
-name: Laravel
+name: Laravel CI/CD
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 
 jobs:
   laravel-tests:
-
+    name: Run Unit & Feature Tests
     runs-on: ubuntu-latest
 
     steps:
@@ -33,3 +33,45 @@ jobs:
         DB_CONNECTION: sqlite
         DB_DATABASE: database/database.sqlite
       run: php artisan test
+
+  deploy:
+    name: Deploy to VPS (Docker Ubuntu)
+    environment: vps1
+    needs: laravel-tests
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'
+
+    steps:
+    - name: Connect SSH & Deploy Docker Container
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.VPS_IP }}
+        username: ${{ secrets.VPS_USER }}
+        password: ${{ secrets.VPS_PASSWORD }}
+        port: 22
+        script: |
+          echo "--> Navigating to directory /root/efkdm..."
+          cd /root/efkdm
+
+          echo "--> Pulling latest code from branch ${{ github.ref_name }}..."
+          git pull origin ${{ github.ref_name }}
+
+          echo "--> Executing Docker deployment for app efkdm on port 5000..."
+          if [ -f "docker-compose.yml" ] || [ -f "docker-compose.yaml" ]; then
+            docker compose down
+            docker compose up -d --build
+          elif [ -f "Dockerfile" ]; then
+            docker build -t efkdm .
+            docker stop efkdm 2>/dev/null || true
+            docker rm efkdm 2>/dev/null || true
+            docker run -d --name efkdm -p 5000:80 --restart always efkdm
+          else
+            # Standard Laravel deployment fallback if running directly in Docker host
+            composer install --no-dev --optimize-autoloader
+            php artisan migrate --force
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+          fi
+
+          echo "--> Deployment finished successfully!"
