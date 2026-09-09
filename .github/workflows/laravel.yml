@@ -89,36 +89,6 @@ jobs:
           docker exec $APP_NAME php artisan storage:link --force 2>/dev/null || true
           docker exec $APP_NAME php artisan config:clear
           docker exec $APP_NAME php artisan cache:clear
-          docker exec $APP_NAME php artisan view:clear
-          docker exec $APP_NAME chmod -R 777 storage bootstrap/cache database
-
-          echo "--> Configuring Nginx Reverse Proxy & SSL (https://$DOMAIN_NAME)..."
-          apt-get update -qq && apt-get install -y -qq nginx certbot python3-certbot-nginx 2>/dev/null || true
-
-          cat << 'EOF' > /etc/nginx/sites-available/efkdm
-          server {
-              listen 80;
-              server_name 202-10-36-205.sslip.io;
-
-              location / {
-                  proxy_pass http://127.0.0.1:5000;
-                  proxy_set_header Host $host;
-                  proxy_set_header X-Real-IP $remote_addr;
-                  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                  proxy_set_header X-Forwarded-Proto $scheme;
-              }
-          }
-          EOF
-
-          ln -sf /etc/nginx/sites-available/efkdm /etc/nginx/sites-enabled/efkdm
-          rm -f /etc/nginx/sites-enabled/default 2>/dev/null || true
-          nginx -t && systemctl reload nginx
-
-          certbot --nginx -d $DOMAIN_NAME --non-interactive --agree-tos --register-unsafely-without-email 2>/dev/null || true
-
-          sed -i "s|^APP_URL=.*|APP_URL=https://${DOMAIN_NAME}|g" .env
-          docker exec $APP_NAME php artisan config:clear
-          docker exec $APP_NAME php artisan cache:clear
 
           echo "--> Deployment Completed Successfully!"
-          echo "--> Web App live at: https://$DOMAIN_NAME or http://202.10.36.205:5000"
+          echo "--> Docker Container '$APP_NAME' is live at http://202.10.36.205:${APP_PORT}"
