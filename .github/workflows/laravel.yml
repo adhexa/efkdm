@@ -49,6 +49,7 @@ jobs:
         username: ${{ secrets.VPS_USER }}
         password: ${{ secrets.VPS_PASSWORD }}
         port: 22
+        command_timeout: 30m
         script: |
           REMOTE_DIR="/root/efkdm-dev"
           APP_NAME="efkdm-dev"
@@ -108,6 +109,7 @@ jobs:
         username: ${{ secrets.VPS_USER }}
         password: ${{ secrets.VPS_PASSWORD }}
         port: 22
+        command_timeout: 30m
         script: |
           REMOTE_DIR="/root/efkdm-staging"
           APP_NAME="efkdm-staging"
@@ -167,6 +169,7 @@ jobs:
         username: ${{ secrets.VPS_USER }}
         password: ${{ secrets.VPS_PASSWORD }}
         port: 22
+        command_timeout: 30m
         script: |
           REMOTE_DIR="/root/efkdm-prod"
           APP_NAME="efkdm-prod"
