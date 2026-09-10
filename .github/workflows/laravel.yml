@@ -36,7 +36,7 @@ jobs:
 
   deploy-dev:
     name: Deploy to Dev Environment (Port 5000)
-    environment: development
+    environment: vps1
     needs: laravel-tests
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
@@ -94,7 +94,7 @@ jobs:
 
   deploy-staging:
     name: Deploy to Staging Environment (Port 5001)
-    environment: staging
+    environment: vps1
     needs: laravel-tests
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/staging'
@@ -152,7 +152,7 @@ jobs:
 
   deploy-production:
     name: Deploy to Production Environment (Port 5003)
-    environment: production
+    environment: vps1
     needs: laravel-tests
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
