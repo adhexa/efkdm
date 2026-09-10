@@ -61,6 +61,7 @@ jobs:
           fi
 
           cd $REMOTE_DIR
+          git config --global --add safe.directory $REMOTE_DIR
           echo "--> Fetching latest code..."
           git fetch origin
           git checkout ${{ github.ref_name }}
@@ -119,6 +120,7 @@ jobs:
           fi
 
           cd $REMOTE_DIR
+          git config --global --add safe.directory $REMOTE_DIR
           echo "--> Fetching latest code..."
           git fetch origin
           git checkout ${{ github.ref_name }}
@@ -177,6 +179,7 @@ jobs:
           fi
 
           cd $REMOTE_DIR
+          git config --global --add safe.directory $REMOTE_DIR
           echo "--> Fetching latest code..."
           git fetch origin
           git checkout ${{ github.ref_name }}
