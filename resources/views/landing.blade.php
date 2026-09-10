@@ -20,7 +20,7 @@
                 <div
                     class="inline-flex items-center gap-2 px-3 py-1 sm:px-4 sm:py-1.5 rounded-full bg-white/95 shadow-md border border-amber-300/80 text-amber-900 text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider max-w-full text-center">
                     <span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
-                    <span class="truncate">PPPLATFORM DIGITALISASI NASIONAL • BAKESBANGPOL SE-INDONESIA</span>
+                    <span class="truncate">PLATFORM DIGITALISASI NASIONAL • BAKESBANGPOL SE-INDONESIA</span>
                 </div>
 
                 <!-- Main Heading Title -->
@@ -79,7 +79,8 @@
                     </div>
                     <div>
                         <p class="text-xl sm:text-2xl font-heading font-extrabold text-slate-900 leading-none mb-1">
-                            {{ $stats['total_reports'] }}</p>
+                            {{ $stats['total_reports'] }}
+                        </p>
                         <p class="text-[11px] sm:text-xs text-slate-600 font-semibold leading-tight">Total Laporan</p>
                     </div>
                 </div>
@@ -93,7 +94,8 @@
                     </div>
                     <div>
                         <p class="text-xl sm:text-2xl font-heading font-extrabold text-slate-900 leading-none mb-1">
-                            {{ $stats['red_alerts'] }}</p>
+                            {{ $stats['red_alerts'] }}
+                        </p>
                         <p class="text-[11px] sm:text-xs text-slate-600 font-semibold leading-tight">Risiko Tinggi</p>
                     </div>
                 </div>
@@ -107,7 +109,8 @@
                     </div>
                     <div>
                         <p class="text-xl sm:text-2xl font-heading font-extrabold text-slate-900 leading-none mb-1">
-                            {{ $stats['in_progress'] }}</p>
+                            {{ $stats['in_progress'] }}
+                        </p>
                         <p class="text-[11px] sm:text-xs text-slate-600 font-semibold leading-tight">Penanganan</p>
                     </div>
                 </div>
@@ -121,7 +124,8 @@
                     </div>
                     <div>
                         <p class="text-xl sm:text-2xl font-heading font-extrabold text-slate-900 leading-none mb-1">
-                            {{ $stats['resolved'] }}</p>
+                            {{ $stats['resolved'] }}
+                        </p>
                         <p class="text-[11px] sm:text-xs text-slate-600 font-semibold leading-tight">Selesai</p>
                     </div>
                 </div>
@@ -351,7 +355,8 @@
                             <h3 class="font-heading font-bold text-lg text-slate-900 dark:text-white mb-2">{{ $category->name }}
                             </h3>
                             <p class="text-slate-600 dark:text-slate-300 text-xs leading-relaxed mb-6">
-                                {{ $category->description }}</p>
+                                {{ $category->description }}
+                            </p>
                         </div>
                         <div
                             class="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800 text-xs">
