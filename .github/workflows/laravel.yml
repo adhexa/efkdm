@@ -71,11 +71,15 @@ jobs:
           echo "--> Checking Docker installation on VPS..."
           command -v docker || (apt-get update && apt-get install -y docker.io docker-compose)
 
-          echo "--> Rebuilding Docker container $APP_NAME..."
-          docker stop $APP_NAME 2>/dev/null || true
-          docker rm $APP_NAME 2>/dev/null || true
-          docker build -t ${APP_NAME}:latest .
-          docker run -d --name $APP_NAME -p ${APP_PORT}:80 -v ${REMOTE_DIR}:/var/www/html --restart always ${APP_NAME}:latest
+          if [ "$(docker ps -q -f name=^/${APP_NAME}$)" ]; then
+            echo "--> Container $APP_NAME is already running. Skipping docker rebuild..."
+          else
+            echo "--> Container $APP_NAME is not running. Building & starting container..."
+            docker stop $APP_NAME 2>/dev/null || true
+            docker rm $APP_NAME 2>/dev/null || true
+            docker build -t ${APP_NAME}:latest .
+            docker run -d --name $APP_NAME -p ${APP_PORT}:80 -v ${REMOTE_DIR}:/var/www/html --restart always ${APP_NAME}:latest
+          fi
 
           echo "--> Setting up environment & Laravel inside container..."
           [ -f .env ] || cp .env.example .env
@@ -131,11 +135,15 @@ jobs:
           echo "--> Checking Docker installation on VPS..."
           command -v docker || (apt-get update && apt-get install -y docker.io docker-compose)
 
-          echo "--> Rebuilding Docker container $APP_NAME..."
-          docker stop $APP_NAME 2>/dev/null || true
-          docker rm $APP_NAME 2>/dev/null || true
-          docker build -t ${APP_NAME}:latest .
-          docker run -d --name $APP_NAME -p ${APP_PORT}:80 -v ${REMOTE_DIR}:/var/www/html --restart always ${APP_NAME}:latest
+          if [ "$(docker ps -q -f name=^/${APP_NAME}$)" ]; then
+            echo "--> Container $APP_NAME is already running. Skipping docker rebuild..."
+          else
+            echo "--> Container $APP_NAME is not running. Building & starting container..."
+            docker stop $APP_NAME 2>/dev/null || true
+            docker rm $APP_NAME 2>/dev/null || true
+            docker build -t ${APP_NAME}:latest .
+            docker run -d --name $APP_NAME -p ${APP_PORT}:80 -v ${REMOTE_DIR}:/var/www/html --restart always ${APP_NAME}:latest
+          fi
 
           echo "--> Setting up environment & Laravel inside container..."
           [ -f .env ] || cp .env.example .env
@@ -191,11 +199,15 @@ jobs:
           echo "--> Checking Docker installation on VPS..."
           command -v docker || (apt-get update && apt-get install -y docker.io docker-compose)
 
-          echo "--> Rebuilding Docker container $APP_NAME..."
-          docker stop $APP_NAME 2>/dev/null || true
-          docker rm $APP_NAME 2>/dev/null || true
-          docker build -t ${APP_NAME}:latest .
-          docker run -d --name $APP_NAME -p ${APP_PORT}:80 -v ${REMOTE_DIR}:/var/www/html --restart always ${APP_NAME}:latest
+          if [ "$(docker ps -q -f name=^/${APP_NAME}$)" ]; then
+            echo "--> Container $APP_NAME is already running. Skipping docker rebuild..."
+          else
+            echo "--> Container $APP_NAME is not running. Building & starting container..."
+            docker stop $APP_NAME 2>/dev/null || true
+            docker rm $APP_NAME 2>/dev/null || true
+            docker build -t ${APP_NAME}:latest .
+            docker run -d --name $APP_NAME -p ${APP_PORT}:80 -v ${REMOTE_DIR}:/var/www/html --restart always ${APP_NAME}:latest
+          fi
 
           echo "--> Setting up environment & Laravel inside container..."
           [ -f .env ] || cp .env.example .env
