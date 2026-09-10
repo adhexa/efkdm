@@ -93,7 +93,11 @@ jobs:
           docker exec $APP_NAME rm -rf /var/www/html/public/storage 2>/dev/null || true
           docker exec $APP_NAME php artisan storage:link --force 2>/dev/null || true
           docker exec $APP_NAME php artisan config:clear
+          docker exec $APP_NAME php artisan route:clear 2>/dev/null || true
+          docker exec $APP_NAME php artisan view:clear 2>/dev/null || true
           docker exec $APP_NAME php artisan cache:clear
+          echo "--> Restarting container to flush PHP OPcache..."
+          docker restart $APP_NAME
 
           echo "--> Dev Deployment Completed Successfully!"
           echo "--> Docker Container '$APP_NAME' is live at http://202.10.36.205:${APP_PORT}"
@@ -157,7 +161,11 @@ jobs:
           docker exec $APP_NAME rm -rf /var/www/html/public/storage 2>/dev/null || true
           docker exec $APP_NAME php artisan storage:link --force 2>/dev/null || true
           docker exec $APP_NAME php artisan config:clear
+          docker exec $APP_NAME php artisan route:clear 2>/dev/null || true
+          docker exec $APP_NAME php artisan view:clear 2>/dev/null || true
           docker exec $APP_NAME php artisan cache:clear
+          echo "--> Restarting container to flush PHP OPcache..."
+          docker restart $APP_NAME
 
           echo "--> Staging Deployment Completed Successfully!"
           echo "--> Docker Container '$APP_NAME' is live at http://202.10.36.205:${APP_PORT}"
@@ -221,7 +229,11 @@ jobs:
           docker exec $APP_NAME rm -rf /var/www/html/public/storage 2>/dev/null || true
           docker exec $APP_NAME php artisan storage:link --force 2>/dev/null || true
           docker exec $APP_NAME php artisan config:clear
+          docker exec $APP_NAME php artisan route:clear 2>/dev/null || true
+          docker exec $APP_NAME php artisan view:clear 2>/dev/null || true
           docker exec $APP_NAME php artisan cache:clear
+          echo "--> Restarting container to flush PHP OPcache..."
+          docker restart $APP_NAME
 
           echo "--> Production Deployment Completed Successfully!"
           echo "--> Docker Container '$APP_NAME' is live at http://202.10.36.205:${APP_PORT}"
